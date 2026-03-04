@@ -47,16 +47,14 @@ export default function App() {
       >
         <MeshGradient
           className="absolute inset-0 w-full h-full"
+          style={{ backgroundColor: '#050505' }}
           colors={['#000000', '#00d4ff', '#0a1a2e', '#050505', '#7b2fff']}
           speed={0.3}
-          backgroundColor="#050505"
         />
         <MeshGradient
           className="absolute inset-0 w-full h-full opacity-30"
           colors={['#000000', '#ffffff', '#00d4ff', '#7b2fff']}
           speed={0.2}
-          wireframe
-          backgroundColor="transparent"
         />
       </div>
 
