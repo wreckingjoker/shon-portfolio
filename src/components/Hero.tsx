@@ -15,11 +15,15 @@ function ProfilePhoto({ width, height }: { width: number; height: number }) {
       style={{
         padding: '2px',
         borderRadius: '1.25rem',
-        background: 'linear-gradient(135deg, rgba(0,212,255,0.5) 0%, rgba(123,47,255,0.4) 50%, rgba(0,212,255,0.15) 100%)',
+        background:
+          'linear-gradient(135deg, rgba(0,212,255,0.5) 0%, rgba(123,47,255,0.4) 50%, rgba(0,212,255,0.15) 100%)',
         boxShadow: '0 0 50px rgba(0,212,255,0.12), 0 24px 64px rgba(0,0,0,0.7)',
       }}
     >
-      <div className="overflow-hidden relative" style={{ borderRadius: 'calc(1.25rem - 2px)', width, height }}>
+      <div
+        className="overflow-hidden relative"
+        style={{ borderRadius: 'calc(1.25rem - 2px)', width, height }}
+      >
         <img
           src="/thumbnails/profile.jpeg"
           alt="Shon Varghese"
@@ -34,30 +38,26 @@ function ProfilePhoto({ width, height }: { width: number; height: number }) {
   )
 }
 
-function AvailableBadge() {
+/* HeroText — block layout (no flex-col) so paragraph stretches to full container width */
+function HeroText({ centered = false }: { centered?: boolean }) {
   return (
-    <motion.div
-      className="inline-flex items-center px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 relative"
-      {...fadeUp(0.2)}
-    >
-      <div className="absolute top-0 left-1 right-1 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent rounded-full" />
-      <span className="text-white/90 text-sm font-medium relative z-10 tracking-wide" style={{ fontFamily: 'var(--font-mono)' }}>
-        ✦ Available for Freelance &amp; Full-Time
-      </span>
-    </motion.div>
-  )
-}
+    <div className={centered ? 'text-center' : ''}>
+      {/* Badge */}
+      <motion.div className={`mb-5 ${centered ? 'flex justify-center' : ''}`} {...fadeUp(0.2)}>
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 relative">
+          <div className="absolute top-0 left-1 right-1 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent rounded-full" />
+          <span
+            className="text-white/90 text-sm font-medium relative z-10 tracking-wide"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            ✦ Available for Freelance &amp; Full-Time
+          </span>
+        </div>
+      </motion.div>
 
-function HeroText({ align = 'left' }: { align?: 'left' | 'center' }) {
-  const textAlign = align === 'center' ? 'text-center items-center' : 'items-start'
-  return (
-    <div className={`flex flex-col ${textAlign}`}>
-      <div className="mb-5">
-        <AvailableBadge />
-      </div>
-
+      {/* Name */}
       <motion.h1
-        className={`font-bold text-white mb-5 leading-none tracking-tight ${align === 'center' ? 'text-center' : ''}`}
+        className="font-bold text-white mb-5 leading-none tracking-tight"
         style={{ fontSize: 'clamp(3rem, 9vw, 8rem)', fontFamily: 'var(--font-display)' }}
         {...fadeUp(0.4)}
       >
@@ -79,15 +79,20 @@ function HeroText({ align = 'left' }: { align?: 'left' | 'center' }) {
         </span>
       </motion.h1>
 
+      {/* Bio — inline maxWidth so it doesn't collapse to min-content */}
       <motion.p
-        className={`text-base font-light text-white/70 mb-7 leading-relaxed max-w-lg ${align === 'center' ? 'text-center' : ''}`}
-        style={{ fontFamily: 'var(--font-display)' }}
+        className={`text-base font-light text-white/70 mb-7 leading-relaxed ${centered ? 'mx-auto' : ''}`}
+        style={{ maxWidth: '32rem', fontFamily: 'var(--font-display)' }}
         {...fadeUp(0.8)}
       >
         Building AI systems that work while you sleep — and creating video ads that make people stop scrolling.
       </motion.p>
 
-      <motion.div className={`flex items-center gap-4 flex-wrap ${align === 'center' ? 'justify-center' : ''}`} {...fadeUp(1.0)}>
+      {/* CTAs */}
+      <motion.div
+        className={`flex items-center gap-4 flex-wrap ${centered ? 'justify-center' : ''}`}
+        {...fadeUp(1.0)}
+      >
         <span
           className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-medium"
           style={{
@@ -116,20 +121,20 @@ export default function Hero() {
     <section id="hero" className="min-h-[100dvh] relative overflow-hidden">
 
       {/* ── MOBILE layout (< lg) ── */}
-      <div className="lg:hidden flex flex-col items-center justify-start pt-28 pb-24 px-6 z-20 relative min-h-[100dvh]">
-        <motion.div className="mb-8" {...fadeUp(0.1)}>
+      <div className="lg:hidden pt-28 pb-24 px-6 z-20 relative min-h-[100dvh]">
+        <motion.div className="flex justify-center mb-8" {...fadeUp(0.1)}>
           <ProfilePhoto width={200} height={260} />
         </motion.div>
-        <HeroText align="center" />
+        <HeroText centered={true} />
       </div>
 
       {/* ── DESKTOP layout (lg+) ── */}
-      {/* Text — bottom left */}
+      {/* Text block — bottom left */}
       <div
         className="hidden lg:block absolute bottom-8 left-8 z-20"
-        style={{ width: 'min(42rem, calc(100% - 420px))' }}
+        style={{ width: 'min(42rem, calc(100% - 400px))' }}
       >
-        <HeroText align="left" />
+        <HeroText centered={false} />
       </div>
 
       {/* Profile photo — right, vertically centered */}
@@ -172,7 +177,9 @@ export default function Hero() {
                   <path id="sv-orbit" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
                 </defs>
                 <text className="fill-white/80" fontSize="7" fontFamily="var(--font-mono)">
-                  <textPath href="#sv-orbit" startOffset="0%">Shon Varghese • Dubai UAE • AI Dev •&nbsp;&nbsp;</textPath>
+                  <textPath href="#sv-orbit" startOffset="0%">
+                    Shon Varghese • Dubai UAE • AI Dev •&nbsp;&nbsp;
+                  </textPath>
                 </text>
               </motion.svg>
             </div>
