@@ -26,13 +26,13 @@ const ENTRIES = [
 
 type Entry = (typeof ENTRIES)[0]
 
-function EntryCard({ entry, side }: { entry: Entry; side: 'left' | 'right' }) {
+function EntryCard({ entry, side, maxWidth = '320px' }: { entry: Entry; side: 'left' | 'right'; maxWidth?: string }) {
   const r = side === 'right'
   return (
     <div
       className="exp-card relative p-6 rounded-2xl overflow-hidden"
       style={{
-        maxWidth: '320px',
+        maxWidth,
         background: 'rgba(255,255,255,0.03)',
         backdropFilter: 'blur(24px) saturate(180%)',
         WebkitBackdropFilter: 'blur(24px) saturate(180%)',
@@ -210,11 +210,49 @@ export default function Experience() {
         <h2 className="text-3xl md:text-4xl font-bold mb-24"
           style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text)' }}>Experience</h2>
 
-        <div className="relative" ref={containerRef}>
+        {/* ── MOBILE timeline (< md) ── */}
+        <div className="md:hidden relative">
+          {/* Vertical connecting line */}
+          <div
+            className="absolute top-5 bottom-5 w-px"
+            style={{
+              left: '19px',
+              background: 'linear-gradient(to bottom, #00d4ff 0%, #7b2fff 50%, #00d4ff 100%)',
+              opacity: 0.5,
+            }}
+          />
+          <div className="flex flex-col gap-8">
+            {ENTRIES.map((entry) => (
+              <div key={entry.company} className="flex items-start gap-4">
+                {/* Dot */}
+                <div
+                  className="exp-card relative z-10 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{
+                    background: 'rgba(0,212,255,0.08)',
+                    border: '1px solid rgba(0,212,255,0.4)',
+                    boxShadow: '0 0 16px rgba(0,212,255,0.25)',
+                    opacity: 0,
+                  }}
+                >
+                  <span className="text-xs font-black" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
+                    {entry.initials}
+                  </span>
+                </div>
+                {/* Card */}
+                <div className="flex-1 min-w-0">
+                  <EntryCard entry={entry} side="left" maxWidth="100%" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── DESKTOP layout (md+) ── */}
+        <div className="hidden md:block relative" ref={containerRef}>
 
           {/* SVG S-curve connector — endpoints set dynamically to match node positions */}
           <svg
-            className="absolute inset-0 w-full h-full hidden md:block pointer-events-none"
+            className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             style={{ zIndex: 0 }}
@@ -255,37 +293,22 @@ export default function Experience() {
           </svg>
 
           {/* Entries */}
-          <div className="flex flex-col gap-24 md:gap-32 relative" style={{ zIndex: 1 }}>
+          <div className="flex flex-col gap-32 relative" style={{ zIndex: 1 }}>
             {ENTRIES.map((entry, i) => (
               <div key={entry.company}
-                className="grid grid-cols-1 md:grid-cols-[1fr_140px_1fr] items-center gap-6 md:gap-0">
+                className="grid grid-cols-[1fr_140px_1fr] items-center">
 
-                <div className="flex md:justify-end md:pr-10">
-                  {i % 2 === 1
-                    ? <EntryCard entry={entry} side="right" />
-                    : <div className="hidden md:block" />}
+                <div className="flex justify-end pr-10">
+                  {i % 2 === 1 ? <EntryCard entry={entry} side="right" /> : <div />}
                 </div>
 
                 {/* Center node — ref used to measure Y for path endpoints */}
-                <div
-                  ref={el => { nodeWrapRefs.current[i] = el }}
-                  className="flex justify-center"
-                >
+                <div ref={el => { nodeWrapRefs.current[i] = el }} className="flex justify-center">
                   <NodeCircle entry={entry} />
-                  <div className="md:hidden flex items-center gap-4">
-                    <div className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ background: 'var(--color-primary)', boxShadow: '0 0 10px rgba(0,212,255,0.6)' }} />
-                    <div>
-                      <p className="font-bold text-sm" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text)' }}>{entry.company}</p>
-                      <p className="text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-primary)' }}>{entry.period}</p>
-                    </div>
-                  </div>
                 </div>
 
-                <div className="md:pl-10">
-                  {i % 2 === 0
-                    ? <EntryCard entry={entry} side="left" />
-                    : <div className="hidden md:block" />}
+                <div className="pl-10">
+                  {i % 2 === 0 ? <EntryCard entry={entry} side="left" /> : <div />}
                 </div>
               </div>
             ))}
